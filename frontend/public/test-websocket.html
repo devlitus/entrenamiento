@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WebSocket Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .logs {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test de Conexión WebSocket</h1>
+        
+        <div id="status" class="status disconnected">
+            Estado: Desconectado
+        </div>
+        
+        <div>
+            <button id="connect-btn" onclick="connectWebSocket()">Conectar</button>
+            <button id="disconnect-btn" onclick="disconnectWebSocket()" disabled>Desconectar</button>
+            <button id="test-training-btn" onclick="testTraining()" disabled>Probar Entrenamiento</button>
+            <button onclick="clearLogs()">Limpiar Logs</button>
+        </div>
+        
+        <h3>Logs de Conexión:</h3>
+        <div id="logs" class="logs"></div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        let socket = null;
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        const connectBtn = document.getElementById('connect-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const testTrainingBtn = document.getElementById('test-training-btn');
+
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `[${timestamp}] [${type.toUpperCase()}] ${message}`;
+            logEntry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function updateStatus(connected) {
+            if (connected) {
+                statusDiv.textContent = 'Estado: Conectado';
+                statusDiv.className = 'status connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                testTrainingBtn.disabled = false;
+            } else {
+                statusDiv.textContent = 'Estado: Desconectado';
+                statusDiv.className = 'status disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                testTrainingBtn.disabled = true;
+            }
+        }
+
+        function connectWebSocket() {
+            addLog('Intentando conectar a ws://localhost:5000...');
+            
+            socket = io('http://localhost:5000');
+            
+            socket.on('connect', () => {
+                addLog('✅ Conectado exitosamente al servidor WebSocket', 'success');
+                updateStatus(true);
+            });
+
+            socket.on('disconnect', () => {
+                addLog('❌ Desconectado del servidor WebSocket', 'error');
+                updateStatus(false);
+            });
+
+            socket.on('connect_error', (error) => {
+                addLog(`❌ Error de conexión: ${error.message}`, 'error');
+                updateStatus(false);
+            });
+
+            // Eventos de entrenamiento
+            socket.on('training_update', (data) => {
+                addLog(`📊 Métricas recibidas: ${JSON.stringify(data)}`, 'success');
+            });
+
+            socket.on('training_log', (data) => {
+                addLog(`📝 Log: ${data.message}`, 'info');
+            });
+
+            socket.on('training_error', (data) => {
+                addLog(`❌ Error de entrenamiento: ${data.error}`, 'error');
+            });
+
+            socket.on('training_complete', (data) => {
+                addLog(`✅ Entrenamiento completado: ${JSON.stringify(data)}`, 'success');
+            });
+        }
+
+        function disconnectWebSocket() {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+                addLog('Desconectado manualmente');
+                updateStatus(false);
+            }
+        }
+
+        function testTraining() {
+            if (socket && socket.connected) {
+                const testConfig = {
+                    epochs: 5,
+                    learning_rate: 0.01,
+                    batch_size: 32
+                };
+                
+                addLog(`🚀 Enviando configuración de prueba: ${JSON.stringify(testConfig)}`);
+                socket.emit('start_training', testConfig);
+            } else {
+                addLog('❌ No hay conexión WebSocket activa', 'error');
+            }
+        }
+
+        function clearLogs() {
+            logsDiv.innerHTML = '';
+        }
+
+        // Auto-conectar al cargar la página
+        window.onload = function() {
+            addLog('Página cargada. Haz clic en "Conectar" para probar la conexión WebSocket.');
+        };
+    </script>
+</body>
+</html>

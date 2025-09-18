@@ -1,22 +1,147 @@
 """
-Rutas REST para gestión de plantillas de modelos.
+Rutas REST para gestión de plantillas de modelos usando Flask-RESTX.
 """
 
 from flask import Blueprint, request, jsonify
+from flask_restx import Namespace, Resource
 from datetime import datetime
 from src.services.validation.model_validation_service import ModelValidationService
 from src.services.templates.template_service import TemplateService
+from .template_models import create_template_models
 import logging
 
 logger = logging.getLogger(__name__)
 
+def create_template_namespace(models, template_service=None):
+    """Crea el namespace de templates con los modelos proporcionados"""
+    
+    if template_service is None:
+        template_service = TemplateService()
+    
+    validation_service = ModelValidationService()
+    
+    templates_ns = Namespace('templates', description='Gestión de plantillas de modelos')
+    
+    # Obtener modelos
+    template_filters_model = models['template_filters_model']
+    template_model = models['template_model']
+    template_list_response_model = models['template_list_response_model']
+    template_customization_model = models['template_customization_model']
+    template_recommendation_request_model = models['template_recommendation_request_model']
+    template_recommendations_response_model = models['template_recommendations_response_model']
+    template_comparison_request_model = models['template_comparison_request_model']
+    template_comparison_response_model = models['template_comparison_response_model']
+    template_search_request_model = models['template_search_request_model']
+    template_validation_response_model = models['template_validation_response_model']
+    template_stats_response_model = models['template_stats_response_model']
+    error_response_model = models['error_response_model']
+
+    @templates_ns.route('/')
+    class TemplateList(Resource):
+        @templates_ns.doc('list_templates')
+        @templates_ns.expect(template_filters_model, validate=False)
+        @templates_ns.marshal_with(template_list_response_model)
+        def get(self):
+            """Lista todas las plantillas disponibles con filtros opcionales"""
+            try:
+                # Obtener parámetros de filtro
+                category = request.args.get('category')
+                complexity = request.args.get('complexity')
+                use_case = request.args.get('use_case')
+                
+                # Aplicar filtros
+                templates = template_service.list_templates(
+                    category=category,
+                    complexity=complexity,
+                    use_case=use_case
+                )
+                
+                return {
+                    'templates': templates,
+                    'total': len(templates),
+                    'filtered': len(templates)
+                }
+                
+            except Exception as e:
+                logger.error(f"Error listando plantillas: {e}")
+                templates_ns.abort(500, f"Error interno del servidor: {str(e)}")
+
+    @templates_ns.route('/<string:template_id>')
+    class Template(Resource):
+        @templates_ns.doc('get_template')
+        @templates_ns.marshal_with(template_model)
+        def get(self, template_id):
+            """Obtiene una plantilla específica por ID"""
+            try:
+                template = template_service.get_template(template_id)
+                if not template:
+                    templates_ns.abort(404, f"Plantilla {template_id} no encontrada")
+                return template
+                
+            except Exception as e:
+                logger.error(f"Error obteniendo plantilla {template_id}: {e}")
+                templates_ns.abort(500, f"Error interno del servidor: {str(e)}")
+
+    @templates_ns.route('/<string:template_id>/customize')
+    class TemplateCustomize(Resource):
+        @templates_ns.doc('customize_template')
+        @templates_ns.expect(template_customization_model)
+        @templates_ns.marshal_with(template_model)
+        def post(self, template_id):
+            """Personaliza una plantilla con parámetros específicos"""
+            try:
+                data = request.get_json()
+                if not data:
+                    templates_ns.abort(400, "Datos de personalización requeridos")
+                
+                customized = template_service.customize_template(template_id, data)
+                return customized
+                
+            except Exception as e:
+                logger.error(f"Error personalizando plantilla {template_id}: {e}")
+                templates_ns.abort(500, f"Error interno del servidor: {str(e)}")
+
+    @templates_ns.route('/recommend')
+    class TemplateRecommend(Resource):
+        @templates_ns.doc('recommend_templates')
+        @templates_ns.expect(template_recommendation_request_model)
+        @templates_ns.marshal_with(template_recommendations_response_model)
+        def post(self):
+            """Recomienda plantillas basadas en requisitos del usuario"""
+            try:
+                data = request.get_json()
+                if not data or 'requirements' not in data:
+                    templates_ns.abort(400, "Requisitos son obligatorios")
+                
+                recommendations = template_service.recommend_templates(
+                    data['requirements'],
+                    preferences=data.get('preferences'),
+                    limit=data.get('limit', 5)
+                )
+                
+                return {
+                    'recommendations': recommendations,
+                    'total_analyzed': len(template_service.list_templates())
+                }
+                
+            except Exception as e:
+                logger.error(f"Error generando recomendaciones: {e}")
+                templates_ns.abort(500, f"Error interno del servidor: {str(e)}")
+
+    return templates_ns
+
 def create_template_blueprint(template_service=None):
-    """Factory function para crear blueprint de plantillas."""
+    """Crea y configura el blueprint de templates (para compatibilidad)."""
+    
+    if template_service is None:
+        template_service = TemplateService()
+    
+    validation_service = ModelValidationService()
+    
     template_bp = Blueprint('templates', __name__, url_prefix='/api/templates')
     
     # Usar servicio proporcionado o crear uno nuevo
     service = template_service or TemplateService()
-    validation_service = ModelValidationService()
     
     @template_bp.route('', methods=['GET'])
     def list_templates():

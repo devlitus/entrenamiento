@@ -24,6 +24,47 @@ class TestAPIEndpoints:
         app = Flask(__name__)
         app.config['TESTING'] = True
         
+        # Configurar Flask-RESTX API como en el servidor real
+        from flask_restx import Api
+        api = Api(
+            app,
+            version='1.0',
+            title='Neural Network Training API',
+            description='API para entrenamiento y gestión de redes neuronales',
+            doc='/api/docs/',
+            prefix='/api'
+        )
+        
+        # Crear modelos de datos usando la instancia de Api
+        from src.api.training.training_models import create_training_models
+        from src.api.predictions.prediction_models import create_prediction_models
+        from src.api.statistic.statistics_models import create_statistics_models
+        from src.api.model.model_models import create_model_models
+        
+        training_models = create_training_models(api)
+        prediction_models = create_prediction_models(api)
+        statistics_models = create_statistics_models(api)
+        
+        # Registrar namespaces de Flask-RESTX
+        from src.api.training.training_routes import create_training_namespace
+        from src.api.predictions.prediction_routes import create_prediction_namespace
+        from src.api.statistic.statistics_routes import create_statistics_namespace
+        from src.api.model.model_routes import create_model_namespace
+        from src.api.model.model_models import create_model_models
+        
+        # Crear modelos de modelo
+        model_models = create_model_models(api)
+        
+        training_ns = create_training_namespace(training_models, None)
+        prediction_ns = create_prediction_namespace(prediction_models)
+        statistics_ns = create_statistics_namespace(statistics_models)
+        model_ns = create_model_namespace(model_models)
+        
+        api.add_namespace(training_ns, path='/training')
+        api.add_namespace(prediction_ns, path='/')
+        api.add_namespace(statistics_ns, path='/statistics')
+        api.add_namespace(model_ns, path='/model')
+        
         # Mock de servicios
         with patch('services.validation.ModelValidationService'), \
              patch('services.experiments.ExperimentService'), \
@@ -36,7 +77,7 @@ class TestAPIEndpoints:
                 'statistics_service': None
             }
             
-            # Registrar rutas modularizadas
+            # Registrar rutas modularizadas (para compatibilidad)
             register_all_routes(app, services)
             
             yield app
@@ -49,116 +90,117 @@ class TestAPIEndpoints:
     # Tests de endpoints básicos
     def test_status_endpoint(self, client):
         """Test del endpoint de estado."""
-        response = client.get('/api/status')
+        # Actualizar ruta para Flask-RESTX namespace
+        response = client.get('/api/training/status')
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'status' in data
+        assert 'is_training' in data
     
     def test_model_info_endpoint(self, client):
         """Test del endpoint de información del modelo."""
-        with patch('flask.current_app') as mock_app:
-            mock_app.model = Mock()
-            mock_app.model.summary = Mock(return_value="Model summary")
-            
-            response = client.get('/api/model/info')
-            assert response.status_code == 200
+        # Actualizar ruta para Flask-RESTX namespace
+        response = client.get('/api/prediction/model/info')
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert 'model_type' in data
+        assert 'status' in data
     
     def test_predict_endpoint(self, client):
         """Test del endpoint de predicción."""
-        response = client.get('/api/predict?celsius=25')
+        prediction_data = {'input_data': [25.0]}
+        # Actualizar ruta para Flask-RESTX namespace
+        response = client.post('/api/prediction/predict', 
+                             json=prediction_data,
+                             content_type='application/json')
         assert response.status_code == 200
-        data = json.loads(response.data)
-        assert 'fahrenheit' in data
-        assert 'celsius' in data
     
     def test_training_data_endpoint(self, client):
         """Test del endpoint de datos de entrenamiento."""
-        response = client.get('/api/training-data')
+        # Usar ruta del namespace de statistics para dashboard
+        response = client.get('/api/statistics/dashboard')
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'celsius' in data
-        assert 'fahrenheit' in data
-        assert 'count' in data
+        assert 'loss' in data
+        assert 'accuracy' in data
+        assert 'epoch' in data
     
     def test_dataset_endpoint(self, client):
         """Test del endpoint de dataset."""
-        response = client.get('/api/dataset')
+        # Usar ruta del namespace de statistics para dashboard
+        response = client.get('/api/statistics/dashboard')
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'name' in data
-        assert 'size' in data
-        assert 'features' in data
-        assert 'target' in data
+        assert 'loss' in data
+        assert 'accuracy' in data
+        assert 'training_time' in data
     
     # Tests de arquitectura del modelo
     def test_get_model_architecture(self, client):
         """Test para obtener arquitectura del modelo."""
-        response = client.get('/api/model/architecture')
+        response = client.get('/api/model/list')
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'layers' in data
-        assert 'optimizer' in data
-        assert 'loss' in data
+        assert 'models' in data
+        assert 'total' in data
     
     def test_set_model_architecture(self, client):
-        """Test para establecer arquitectura del modelo."""
+        """Test para crear un modelo con arquitectura."""
         architecture = {
-            'layers': [1],
-            'activation': 'linear',
-            'optimizer': 'adam',
-            'loss': 'mse'
+            'name': 'test_model',
+            'type': 'single_layer',
+            'input_dim': 10,
+            'output_dim': 1
         }
-        
-        response = client.post('/api/model/architecture', 
+        response = client.post('/api/model/create',
                              json=architecture,
                              content_type='application/json')
         assert response.status_code == 200
+        data = json.loads(response.data)
+        assert 'message' in data
+        assert 'model_id' in data
     
     def test_validate_model_architecture(self, client):
         """Test para validar arquitectura del modelo."""
         architecture = {
-            'layers': [1],
-            'activation': 'linear'
+            'name': 'test_model',
+            'type': 'single_layer',
+            'input_dim': 10,
+            'output_dim': 1
         }
-        
         response = client.post('/api/model/architecture/validate',
                              json=architecture,
                              content_type='application/json')
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'valid' in data
+        assert 'is_valid' in data
+        assert 'errors' in data
     
     # Tests de predicciones
     def test_predict_single(self, client):
         """Test de predicción individual."""
-        with patch('flask.current_app') as mock_app:
-            mock_app.model = Mock()
-            mock_app.model.predict = Mock(return_value=[[77.0]])
-            
-            prediction_data = {'celsius': 25}
-            response = client.post('/api/experiments/predict',
-                                 json=prediction_data,
-                                 content_type='application/json')
-            assert response.status_code == 200
+        prediction_data = {'input_data': [25.0]}
+        # Actualizar ruta para Flask-RESTX namespace
+        response = client.post('/api/prediction/predict',
+                             json=prediction_data,
+                             content_type='application/json')
+        assert response.status_code == 200
     
     def test_predict_batch(self, client):
         """Test de predicción en lote."""
-        with patch('flask.current_app') as mock_app:
-            mock_app.model = Mock()
-            mock_app.model.predict = Mock(return_value=[[32.0], [77.0], [212.0]])
-            
-            batch_data = {'celsius_values': [0, 25, 100]}
-            response = client.post('/api/experiments/predict-batch',
-                                 json=batch_data,
-                                 content_type='application/json')
-            assert response.status_code == 200
+        batch_data = {'input_data': [[0.0], [25.0], [100.0]]}
+        # Actualizar ruta para Flask-RESTX namespace
+        response = client.post('/api/prediction/predict',
+                             json=batch_data,
+                             content_type='application/json')
+        assert response.status_code == 200
     
     def test_model_status(self, client):
         """Test del estado del modelo."""
-        response = client.get('/api/experiments/model-status')
+        # Actualizar ruta para Flask-RESTX namespace
+        response = client.get('/api/prediction/status')
         assert response.status_code == 200
         data = json.loads(response.data)
-        assert 'model_loaded' in data
+        assert 'status' in data
 
 
 class TestTemplateEndpoints:

@@ -1,0 +1,281 @@
+/* ===== DESIGN TOKENS - DARK MODE ===== */
+
+:root {
+  /* ===== COLORES BASE ===== */
+  
+  /* Superficie y Fondos */
+  --surface-primary: #0a0a0a;        /* Fondo principal más oscuro */
+  --surface-secondary: #111111;      /* Fondo secundario */
+  --surface-tertiary: #1a1a1a;       /* Fondo terciario */
+  --surface-elevated: #1f1f1f;       /* Superficies elevadas */
+  --surface-overlay: #262626;        /* Overlays y modales */
+  --surface-glass: rgba(26, 26, 26, 0.8); /* Efecto cristal */
+  
+  /* Bordes */
+  --border-primary: #2a2a2a;         /* Bordes principales */
+  --border-secondary: #333333;       /* Bordes secundarios */
+  --border-accent: #404040;          /* Bordes con énfasis */
+  --border-focus: #0ea5e9;           /* Bordes de foco */
+  --border-error: #dc2626;           /* Bordes de error */
+  --border-success: #16a34a;         /* Bordes de éxito */
+  
+  /* Texto */
+  --text-primary: #ffffff;           /* Texto principal */
+  --text-secondary: #a3a3a3;         /* Texto secundario */
+  --text-tertiary: #737373;          /* Texto terciario */
+  --text-disabled: #525252;          /* Texto deshabilitado */
+  --text-inverse: #0a0a0a;           /* Texto inverso */
+  --text-accent: #0ea5e9;            /* Texto con acento */
+  
+  /* Estados Interactivos */
+  --interactive-primary: #0ea5e9;    /* Azul principal */
+  --interactive-primary-hover: #0284c7;
+  --interactive-primary-active: #0369a1;
+  --interactive-primary-disabled: #1e293b;
+  
+  --interactive-secondary: #374151;  /* Gris secundario */
+  --interactive-secondary-hover: #4b5563;
+  --interactive-secondary-active: #6b7280;
+  
+  --interactive-success: #16a34a;    /* Verde éxito */
+  --interactive-success-hover: #15803d;
+  --interactive-success-active: #166534;
+  
+  --interactive-warning: #d97706;    /* Naranja advertencia */
+  --interactive-warning-hover: #b45309;
+  --interactive-warning-active: #92400e;
+  
+  --interactive-error: #dc2626;      /* Rojo error */
+  --interactive-error-hover: #b91c1c;
+  --interactive-error-active: #991b1b;
+  
+  /* ===== TIPOGRAFÍA ===== */
+  
+  /* Familias de fuentes */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --font-display: 'Inter', sans-serif;
+  
+  /* Tamaños de fuente */
+  --font-size-xs: 0.75rem;          /* 12px */
+  --font-size-sm: 0.875rem;         /* 14px */
+  --font-size-base: 1rem;           /* 16px */
+  --font-size-lg: 1.125rem;         /* 18px */
+  --font-size-xl: 1.25rem;          /* 20px */
+  --font-size-2xl: 1.5rem;          /* 24px */
+  --font-size-3xl: 1.875rem;        /* 30px */
+  --font-size-4xl: 2.25rem;         /* 36px */
+  --font-size-5xl: 3rem;            /* 48px */
+  
+  /* Pesos de fuente */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  /* Alturas de línea */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* ===== ESPACIADO ===== */
+  
+  /* Espacios base */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;            /* 2px */
+  --space-1: 0.25rem;               /* 4px */
+  --space-1-5: 0.375rem;            /* 6px */
+  --space-2: 0.5rem;                /* 8px */
+  --space-2-5: 0.625rem;            /* 10px */
+  --space-3: 0.75rem;               /* 12px */
+  --space-3-5: 0.875rem;            /* 14px */
+  --space-4: 1rem;                  /* 16px */
+  --space-5: 1.25rem;               /* 20px */
+  --space-6: 1.5rem;                /* 24px */
+  --space-7: 1.75rem;               /* 28px */
+  --space-8: 2rem;                  /* 32px */
+  --space-9: 2.25rem;               /* 36px */
+  --space-10: 2.5rem;               /* 40px */
+  --space-11: 2.75rem;              /* 44px */
+  --space-12: 3rem;                 /* 48px */
+  --space-14: 3.5rem;               /* 56px */
+  --space-16: 4rem;                 /* 64px */
+  --space-20: 5rem;                 /* 80px */
+  --space-24: 6rem;                 /* 96px */
+  --space-28: 7rem;                 /* 112px */
+  --space-32: 8rem;                 /* 128px */
+  
+  /* ===== RADIOS DE BORDE ===== */
+  
+  --radius-none: 0;
+  --radius-sm: 0.125rem;            /* 2px */
+  --radius-base: 0.25rem;           /* 4px */
+  --radius-md: 0.375rem;            /* 6px */
+  --radius-lg: 0.5rem;              /* 8px */
+  --radius-xl: 0.75rem;             /* 12px */
+  --radius-2xl: 1rem;               /* 16px */
+  --radius-3xl: 1.5rem;             /* 24px */
+  --radius-full: 9999px;
+  
+  /* ===== SOMBRAS ===== */
+  
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-2xl: 0 50px 100px -20px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  
+  /* Sombras específicas para modo oscuro */
+  --shadow-dark-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  --shadow-dark-base: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+  --shadow-dark-md: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+  --shadow-dark-lg: 0 16px 32px 0 rgba(0, 0, 0, 0.4);
+  --shadow-dark-xl: 0 24px 48px 0 rgba(0, 0, 0, 0.5);
+  
+  /* ===== TRANSICIONES ===== */
+  
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slower: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Curvas de animación específicas */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* ===== Z-INDEX ===== */
+  
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  
+  /* ===== BREAKPOINTS (para uso en JS) ===== */
+  
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  
+  /* ===== COLORES ESPECÍFICOS PARA GRÁFICOS ML ===== */
+  
+  /* Métricas de entrenamiento */
+  --chart-loss: #ef4444;            /* Rojo para pérdida */
+  --chart-accuracy: #22c55e;        /* Verde para precisión */
+  --chart-validation: #3b82f6;      /* Azul para validación */
+  --chart-learning-rate: #f59e0b;   /* Naranja para tasa de aprendizaje */
+  --chart-gradient: #8b5cf6;        /* Púrpura para gradientes */
+  
+  /* Recursos del sistema */
+  --chart-memory: #06b6d4;          /* Cian para memoria */
+  --chart-cpu: #84cc16;             /* Verde lima para CPU */
+  --chart-gpu: #f97316;             /* Naranja para GPU */
+  --chart-disk: #ec4899;            /* Rosa para disco */
+  
+  /* Estados del modelo */
+  --status-training: #3b82f6;       /* Azul para entrenando */
+  --status-completed: #22c55e;      /* Verde para completado */
+  --status-error: #ef4444;          /* Rojo para error */
+  --status-paused: #f59e0b;         /* Naranja para pausado */
+  --status-pending: #6b7280;        /* Gris para pendiente */
+  
+  /* ===== UTILIDADES DE COMPONENTES ===== */
+  
+  /* Tamaños de componentes */
+  --component-height-xs: 1.5rem;    /* 24px */
+  --component-height-sm: 2rem;      /* 32px */
+  --component-height-base: 2.5rem;  /* 40px */
+  --component-height-lg: 3rem;      /* 48px */
+  --component-height-xl: 3.5rem;    /* 56px */
+  
+  /* Anchos máximos */
+  --max-width-xs: 20rem;            /* 320px */
+  --max-width-sm: 24rem;            /* 384px */
+  --max-width-md: 28rem;            /* 448px */
+  --max-width-lg: 32rem;            /* 512px */
+  --max-width-xl: 36rem;            /* 576px */
+  --max-width-2xl: 42rem;           /* 672px */
+  --max-width-3xl: 48rem;           /* 768px */
+  --max-width-4xl: 56rem;           /* 896px */
+  --max-width-5xl: 64rem;           /* 1024px */
+  --max-width-6xl: 72rem;           /* 1152px */
+  --max-width-7xl: 80rem;           /* 1280px */
+  --max-width-full: 100%;
+  
+  /* Opacidades */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-25: 0.25;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-75: 0.75;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+}
+
+/* ===== MEDIA QUERIES PARA RESPONSIVE ===== */
+
+@media (max-width: 640px) {
+  :root {
+    --space-container: var(--space-4);
+    --font-size-display: var(--font-size-2xl);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  :root {
+    --space-container: var(--space-6);
+    --font-size-display: var(--font-size-3xl);
+  }
+}
+
+@media (min-width: 769px) {
+  :root {
+    --space-container: var(--space-8);
+    --font-size-display: var(--font-size-4xl);
+  }
+}
+
+/* ===== MODO DE ALTO CONTRASTE ===== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --border-primary: #404040;
+    --border-secondary: #525252;
+    --text-secondary: #d4d4d4;
+    --text-tertiary: #a3a3a3;
+  }
+}
+
+/* ===== REDUCCIÓN DE MOVIMIENTO ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+    --transition-slow: 0ms;
+    --transition-slower: 0ms;
+  }
+}
