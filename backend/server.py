@@ -8,6 +8,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from flask_restx import Api
 from config import Config
 from src.routes import register_all_routes
 from src.services.training.training_controller import TrainingController
@@ -21,6 +22,16 @@ def create_app():
     
     # Configurar CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}})
+    
+    # Configurar Flask-RESTX API
+    api = Api(
+        app,
+        version='1.0',
+        title='Neural Network Training API',
+        description='API para entrenamiento y gestión de redes neuronales',
+        doc='/api/docs/',
+        prefix='/api'
+    )
     
     # Configurar SocketIO con parámetros específicos
     socketio = SocketIO(
@@ -41,8 +52,33 @@ def create_app():
     training_controller = TrainingController(socketio)
     training_executor = TrainingExecutor(socketio)
     
-    # Registrar rutas consolidadas
-    register_all_routes(app, socketio, training_controller, training_executor)
+    # Crear modelos de datos usando la instancia de Api
+    from src.api.training_models import create_training_models
+    from src.api.prediction_models import create_prediction_models
+    from src.api.statistics_models import create_statistics_models
+    
+    training_models = create_training_models(api)
+    prediction_models = create_prediction_models(api)
+    statistics_models = create_statistics_models(api)
+    
+    # Registrar namespaces de Flask-RESTX
+    from src.api.training_routes import create_training_namespace
+    from src.api.predictions.prediction_routes import create_prediction_namespace
+    from src.api.statistics_routes import create_statistics_namespace
+    
+    training_ns = create_training_namespace(training_models)
+    prediction_ns = create_prediction_namespace(prediction_models)
+    statistics_ns = create_statistics_namespace(statistics_models)
+    
+    api.add_namespace(training_ns, path='/training')
+    api.add_namespace(prediction_ns, path='/')
+    api.add_namespace(statistics_ns, path='/statistics')
+    
+    # Registrar rutas consolidadas (para compatibilidad)
+    register_all_routes(app, {
+        'training_controller': training_controller,
+        'training_executor': training_executor
+    })
     
     # Crear directorios necesarios
     os.makedirs(Config.DATA_DIR, exist_ok=True)
@@ -51,12 +87,10 @@ def create_app():
     return app, socketio
 
 if __name__ == '__main__':
-    from src import create_app
     app, socketio = create_app()
     
     print("🚀 Sistema de Métricas ML iniciado")
     print(f"📊 API: http://localhost:{Config.PORT}/api/")
-    print(f"📈 Dashboard: http://localhost:5173")
     
     socketio.run(
         app, 

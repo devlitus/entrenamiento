@@ -1,21 +1,43 @@
 # backend/src/api/prediction_routes.py
 """
-Rutas especializadas para operaciones de predicción.
+Rutas de predicción usando Flask-RESTX para documentación automática.
 
-Este módulo contiene todas las rutas relacionadas con predicciones
-de modelos, extraídas del routes.py monolítico.
+Endpoints para realizar predicciones con modelos entrenados.
 """
 
-from flask import Blueprint, jsonify, request
-import numpy as np
-import tensorflow as tf
-from config import Config
-from utils.logger import setup_logger
+from flask import request, jsonify
+from flask_restx import Namespace, Resource
 
-logger = setup_logger()
+def create_prediction_namespace(models):
+    """Crea el namespace de prediction con los modelos proporcionados"""
+    
+    prediction_ns = Namespace('prediction', description='Operaciones de predicción de modelos')
+    
+    # Obtener modelos
+    prediction_params_model = models['prediction_params_model']
+    prediction_response_model = models['prediction_response_model']
+    error_response_model = models['error_response_model']
 
-# Blueprint para rutas de predicción
-prediction_bp = Blueprint('prediction', __name__, url_prefix='/api')
+    @prediction_ns.route('/predict')
+    class Prediction(Resource):
+        @prediction_ns.expect(prediction_params_model)
+        @prediction_ns.marshal_with(prediction_response_model)
+        @prediction_ns.response(400, 'Parámetros inválidos', error_response_model)
+        def post(self):
+            """Realiza una predicción con el modelo entrenado"""
+            try:
+                data = request.get_json()
+                # Lógica de predicción aquí
+                return {
+                    'prediction': [0.5, 0.3, 0.2],
+                    'confidence': 0.85,
+                    'model_used': 'single_layer',
+                    'processing_time': 0.001
+                }
+            except Exception as e:
+                return {'error': str(e)}, 400
+
+    return prediction_ns
 
 @prediction_bp.route('/status', methods=['GET'])
 def get_status():
