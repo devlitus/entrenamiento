@@ -1,0 +1,198 @@
+# ===================================
+# Neural Network Trainer - .gitignore
+# ===================================
+
+# Entornos virtuales de Python
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Node.js (Frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.local
+
+# ===================================
+# Machine Learning específicos
+# ===================================
+
+# Modelos entrenados
+models/
+*.keras
+*.h5
+*.pkl
+*.joblib
+*.model
+*.weights
+
+# Datasets y datos
+data/
+datasets/
+*.csv
+*.json
+*.parquet
+*.feather
+
+# Checkpoints de entrenamiento
+checkpoints/
+*.ckpt
+*.pth
+*.pt
+
+# TensorBoard logs
+logs/
+tensorboard_logs/
+tb_logs/
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# ===================================
+# Archivos del sistema y editores
+# ===================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# IDEs y editores
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.metadata
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ===================================
+# Archivos temporales y logs
+# ===================================
+
+# Logs generales
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+
+# Cache
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ===================================
+# Configuración y secretos
+# ===================================
+
+# Variables de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Configuraciones locales
+config.local.py
+settings.local.py
+local_settings.py
+
+# Claves y certificados
+*.key
+*.pem
+*.crt
+*.p12
+secrets/
+
+# ===================================
+# Archivos específicos del proyecto
+# ===================================
+
+# Archivos de métricas y experimentos
+experiments/
+metrics/
+results/
+
+# Archivos de base de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de configuración de desarrollo
+.trae/cache/
+.trae/temp/

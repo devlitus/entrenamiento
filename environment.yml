@@ -1,0 +1,47 @@
+name: neural-trainer
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Python base
+  - python=3.9
+  
+  # Machine Learning Core - usar conda-forge para mejor compatibilidad
+  - numpy>=1.24.3
+  - pandas>=2.0.3
+  - scikit-learn>=1.3.0
+  
+  # Web Framework
+  - flask>=3.0.0
+  - flask-cors>=4.0.0
+  - eventlet>=0.33.3
+  
+  # Visualization
+  - matplotlib
+  - plotly>=5.17.0
+  
+  # System Monitoring
+  - psutil>=5.9.0
+  
+  # Data Processing
+  - h5py>=3.7.2
+  
+  # Development Tools
+  - pytest
+  - pytest-cov
+  - jupyter
+  - ipython
+  
+  # Pip dependencies (TensorFlow y otros via pip para mejor compatibilidad)
+  - pip
+  - pip:
+    - tensorflow>=2.15.0
+    - flask-socketio>=5.3.6
+    - GPUtil>=1.4.0
+    - pydantic>=2.0.0
+    
+# Variables de entorno
+variables:
+  NEURAL_TRAINER_ENV: development
+  PYTHONPATH: $CONDA_PREFIX/src
+  TF_CPP_MIN_LOG_LEVEL: "1"
