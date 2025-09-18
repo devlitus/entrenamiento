@@ -1,0 +1,54 @@
+[flake8]
+# Configuración de Flake8 para Python Backend
+# Alineado con las reglas de Clean Code y PEP8
+
+# Longitud máxima de línea
+max-line-length = 88
+
+# Códigos de error a ignorar
+ignore = 
+    # E203: whitespace before ':' (conflicto con black)
+    E203,
+    # W503: line break before binary operator (conflicto con black)
+    W503,
+    # E501: line too long (manejado por black)
+    E501
+
+# Archivos y directorios a excluir
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .env,
+    migrations,
+    .pytest_cache,
+    build,
+    dist,
+    *.egg-info
+
+# Complejidad ciclomática máxima
+max-complexity = 10
+
+# Configuración específica para docstrings
+docstring-convention = google
+
+# Configuración para imports
+application-import-names = app,config,models,services,utils,api
+import-order-style = google
+
+# Configuración para nombres
+# Permitir nombres de variables de una letra en contextos específicos
+per-file-ignores =
+    # Tests pueden tener nombres más flexibles
+    test_*.py:N802,N806
+    # Archivos de configuración pueden tener constantes en mayúsculas
+    config.py:N806
+    # Archivos de migración pueden tener nombres específicos
+    migrations/*.py:N999
+
+# Configuración para anotaciones de tipo
+enable-extensions = 
+    # Verificar anotaciones de tipo
+    T4
