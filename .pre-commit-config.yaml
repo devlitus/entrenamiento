@@ -1,0 +1,133 @@
+# Configuración de Pre-commit Hooks
+# Automatiza la verificación de calidad de código antes de cada commit
+
+repos:
+  # Hooks generales
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.md$'
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Python Backend - Black (formateador)
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        files: ^backend/.*\.py$
+        language_version: python3
+
+  # Python Backend - isort (ordenamiento de imports)
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        files: ^backend/.*\.py$
+        args: ["--profile", "black"]
+
+  # Python Backend - flake8 (linting)
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        files: ^backend/.*\.py$
+        additional_dependencies: [
+          flake8-docstrings,
+          flake8-import-order,
+          flake8-bugbear,
+          flake8-comprehensions,
+          flake8-simplify,
+        ]
+
+  # Python Backend - mypy (verificación de tipos)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        files: ^backend/.*\.py$
+        additional_dependencies: [
+          types-requests,
+          types-PyYAML,
+          types-python-dateutil,
+        ]
+
+  # Python Backend - bandit (seguridad)
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        files: ^backend/.*\.py$
+        args: ["-c", "backend/pyproject.toml"]
+
+  # Frontend TypeScript/React - ESLint
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint
+        entry: bash -c 'cd frontend && npm run lint'
+        language: system
+        files: ^frontend/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false
+
+  # Frontend TypeScript - Type checking
+  - repo: local
+    hooks:
+      - id: typescript-check
+        name: TypeScript Check
+        entry: bash -c 'cd frontend && npm run type-check'
+        language: system
+        files: ^frontend/.*\.(ts|tsx)$
+        pass_filenames: false
+
+  # Frontend - Prettier (formateador)
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        files: ^frontend/.*\.(ts|tsx|js|jsx|json|css|scss|md)$
+        exclude: ^frontend/(dist|node_modules)/
+
+  # Verificación de dependencias de seguridad
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+      - id: python-safety-dependencies-check
+        files: ^backend/requirements.*\.txt$
+
+  # Verificación de secretos
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: package.lock.json
+
+# Configuración global
+default_language_version:
+  python: python3.9
+  node: '18.17.0'
+
+# Configuración de CI
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
